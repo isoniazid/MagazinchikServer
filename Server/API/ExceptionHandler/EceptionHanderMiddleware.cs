@@ -16,20 +16,37 @@ public class ExceptionHandlerMiddleware
             await _next.Invoke(context);
         }
 
+        catch (APIException ex)
+        {
+            await HandleAPIMessageAsync(context, ex).ConfigureAwait(false);
+        }
+
         catch (Exception ex)
         {
             await HandleMessageAsync(context, ex).ConfigureAwait(false);
         }
     }
 
-    private static Task HandleMessageAsync(HttpContext context, Exception exception)
+    private static Task HandleAPIMessageAsync(HttpContext context, APIException exception)
+    // Ошибки сервера, связанные с API. Они вполне могут возникать
     {
         context.Response.ContentType = "application/json";
-        int statusCode = (int)StatusCodes.Status404NotFound;
 
-        var result = JsonSerializer.Serialize(new { StatucCode = statusCode, ErrorMessage = exception.Message });
+        var result = JsonSerializer.Serialize(new { StatusCode = exception.StatusCode, ErrorMessage = exception.Message });
 
-        context.Response.StatusCode = statusCode;
+        context.Response.StatusCode = exception.StatusCode;
+        return context.Response.WriteAsync(result);
+    }
+
+    private static Task HandleMessageAsync(HttpContext context, Exception exception) 
+    // Внутренние ошибки сервера. Их быть в норме не должно
+    {
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+
+        var result = JsonSerializer.Serialize(exception);
+
+        
         return context.Response.WriteAsync(result);
     }
 
