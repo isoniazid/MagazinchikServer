@@ -43,11 +43,8 @@ public class ExceptionHandlerMiddleware
     {
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-
-        var result = JsonSerializer.Serialize(exception);
-
         
-        return context.Response.WriteAsync(result);
+        return context.Response.WriteAsync(exception.ToString());
     }
 
 }
