@@ -6,7 +6,7 @@
 
 3) ПКМ по вкладке -> Create -> Login/Group Role..
 
-4) Name = deleveloper , password = magazinchik_forever
+4) Name = developer , password = magazinchik_forever
 
 5) Привилегии пока проставь все.
 
@@ -60,8 +60,9 @@ Encoding лично я никакой не выставлял.
 у тебя должен стоять дотнет 7 версии и си шарп 11.
 
 1) заходишь в консоли в папку Server
-2) пишешь команду dotnet run Program.cs
-3) Сервер запустится и все будет ок
+2) пишешь команду dotnet restore
+3) пишешь команду dotnet run Program.cs
+4) Сервер запустится и все будет ок
 
 NB: Сервер сам создаст БД и таблицу в ней, если не найдет готовую
 
