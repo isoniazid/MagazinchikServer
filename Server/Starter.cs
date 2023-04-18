@@ -17,6 +17,8 @@ public static class Starter
 
     public static void Configure(WebApplication app)
     {
+        app.UseMiddleware<ExceptionHandlerMiddleware>();
+
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();

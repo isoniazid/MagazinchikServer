@@ -11,6 +11,7 @@ public class UserAPI
         ? Results.Ok(user)
         : Results.NotFound())
         .Produces<User>(StatusCodes.Status200OK)
+        .Produces(StatusCodes.Status404NotFound)
         .WithName("GetUser by id")
         .WithTags("user");
 
@@ -33,6 +34,7 @@ public class UserAPI
         })
         .Accepts<User>("application/json")
         .WithName("Replaces user with params")
+        .Produces(StatusCodes.Status404NotFound)
         .WithTags("user");
 
         app.MapDelete("api/user/{id}", async (int id, IUserRepository repo) =>
@@ -42,6 +44,7 @@ public class UserAPI
             return Results.NoContent();
         })
         .WithName("DeleteUser")
+        .Produces(StatusCodes.Status404NotFound)
         .WithTags("user");
     }
 }
