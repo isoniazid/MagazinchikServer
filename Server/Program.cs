@@ -3,19 +3,15 @@ class Program
 {
     public static void Main(string[] args)
     {
-        Controller globalController = new Controller();
-
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.Services.AddCors();
+        Starter.RegisterServices(builder);
 
         var app = builder.Build();
 
-        app.UseCors(builder => {builder.AllowAnyOrigin();
-         builder.AllowAnyHeader();});
+        Starter.Configure(app);
 
-        app.Run(globalController.APIHandler);
-        
+        new UserAPI().Register(app);
 
         app.Run();
     }
