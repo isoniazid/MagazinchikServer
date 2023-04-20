@@ -31,7 +31,8 @@ public class TokenRepository : ITokenRepository
 
     public async Task<Token> GetTokenAsync(int tokenId)
     {
-        var result = await _context.Tokens.FindAsync(new object[] { tokenId });
+        var result = await _context.Tokens.Include(t => t.User).FirstOrDefaultAsync(t => t.Id == tokenId);
+        //var result = await _context.Tokens.FindAsync(new object[] { tokenId });
         if (result == null) throw new APIException("No such token", StatusCodes.Status404NotFound);
         else return result;
     }

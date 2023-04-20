@@ -59,4 +59,21 @@ public class UserRepository : IUserRepository
         userFromDb.Email = user.Email;
         userFromDb.Name = user.Name;
     }
+
+    public async Task<string> GetUserTokenAsync(int userId)
+    {
+        var tokenFromDb = await _context.Tokens.Where(token => token.User.Id == userId).FirstOrDefaultAsync();
+        if(tokenFromDb == null) throw new APIException("No token for this user", StatusCodes.Status404NotFound);
+        return tokenFromDb.RefreshToken;
+    }
+
+    public async Task CreateUserTokenAsync(int userId)
+    {
+        var userFromDb = await _context.Users.FindAsync(new object[] { userId });
+        if(userFromDb == null) throw new APIException("Can't create token because user with such id does not exist",StatusCodes.Status424FailedDependency);
+        var currentToken = new Token();
+        currentToken.User = userFromDb;
+        currentToken.RefreshToken = "ЖОПА";
+        await _context.Tokens.AddAsync(currentToken);
+    }
 }

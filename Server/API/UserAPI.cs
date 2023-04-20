@@ -17,6 +17,25 @@ public class UserAPI
         .WithName("GetUser by id")
         .WithTags("user");
 
+        //Получить Token юзера по айди
+        app.MapGet("/api/user/token/{id}", async (int id, IUserRepository repo) => Results.Ok(await repo.GetUserTokenAsync(id)))
+        .Produces<Token>(StatusCodes.Status200OK)
+        .Produces(StatusCodes.Status404NotFound)
+        .WithName("GetUser Token by id")
+        .WithTags("user");
+
+        //Создать Token юзера по айди
+        app.MapPost("/api/user/token/{id}", async (int id, IUserRepository repo) =>
+        {
+            await repo.CreateUserTokenAsync(id);
+            await repo.SaveAsync();
+            return Results.Ok();
+        })
+        .Produces(StatusCodes.Status200OK)
+        .Produces(StatusCodes.Status404NotFound)
+        .WithName("Create User Token by id")
+        .WithTags("user");
+
         //Добавить юзера с параметрами
         app.MapPost("/api/user", async ([FromBody] User user, IUserRepository repo) =>
         {
