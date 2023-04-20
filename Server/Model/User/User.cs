@@ -9,19 +9,19 @@ public class User
 
     public string Role { get; set; } = string.Empty; //NB возможно тут нужен енум
 
-    public List<Order> Orders { get; set; } = new();
+/*     public List<Order>? Orders { get; set; } = new();
 
-    public Cart Cart { get; set; } = new();
+    public Cart? Cart { get; set; } = new();
 
-    public List<Favourite> Favourites { get; set; } = new();
+    public List<Favourite>? Favourites { get; set; } = new();
 
-    public List<Comment> Comments { get; set; } = new();
+    public List<Comment>? Comments { get; set; } = new();
 
-    public List<Rate> Rates { get; set; } = new();
+    public List<Rate>? Rates { get; set; } = new();
 
-    public Activation Activation { get; set; } = new();
+    public Activation? Activation { get; set; } = new();
 
-    public Token Token { get; set; } = new();
+    public Token? Token { get; set; } = new(); */
 
 
 }

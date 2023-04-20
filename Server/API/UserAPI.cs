@@ -43,7 +43,7 @@ public class UserAPI
         .WithTags("user");
 
         //Удалить юзера
-        app.MapDelete("api/user/{id}", async (int id, IUserRepository repo) =>
+        app.MapDelete("/api/user/{id}", async (int id, IUserRepository repo) =>
         {
             await repo.DeleteUserAsync(id);
             await repo.SaveAsync();

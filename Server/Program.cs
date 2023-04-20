@@ -11,7 +11,7 @@ class Program
 
         Starter.Configure(app);
 
-        new UserAPI().Register(app);
+        Starter.RegisterAPIs(app);
 
         app.Run();
     }

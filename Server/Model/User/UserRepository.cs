@@ -1,9 +1,9 @@
 public class UserRepository : IUserRepository
 {
 
-    private readonly UserDb _context;
+    private readonly ApplicationDbContext _context;
     private bool _disposed = false;
-    public UserRepository(UserDb context)
+    public UserRepository(ApplicationDbContext context)
     {
         _context = context;
     }
