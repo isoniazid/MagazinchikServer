@@ -3,13 +3,13 @@ public class OrderProductAPI
     public void Register(WebApplication app)
     {
         //Получить всех orderProduct
-        app.MapGet("/api/orderProduct", async (IOrderProductRepository repo) => Results.Ok(await repo.GetOrderProductsAsync()))
+        app.MapGet("/api/order_product", async (IOrderProductRepository repo) => Results.Ok(await repo.GetOrderProductsAsync()))
         .Produces<List<OrderProduct>>(StatusCodes.Status200OK)
         .WithName("GetAllOrderProduct")
         .WithTags("orderProduct");
 
         //Получить orderProduct по айди
-        app.MapGet("/api/orderProduct/{id}", async (int id, IOrderProductRepository repo) => await repo.GetOrderProductAsync(id) is OrderProduct orderProduct
+        app.MapGet("/api/order_product/{id}", async (int id, IOrderProductRepository repo) => await repo.GetOrderProductAsync(id) is OrderProduct orderProduct
         ? Results.Ok(orderProduct)
         : Results.NotFound())
         .Produces<OrderProduct>(StatusCodes.Status200OK)
@@ -18,7 +18,7 @@ public class OrderProductAPI
         .WithTags("orderProduct");
 
         //Добавить orderProduct с параметрами
-        app.MapPost("/api/orderProduct", async ([FromBody] OrderProduct orderProduct, IOrderProductRepository repo) =>
+        app.MapPost("/api/order_product", async ([FromBody] OrderProduct orderProduct, IOrderProductRepository repo) =>
         {
             await repo.InsertOrderProductAsync(orderProduct);
             await repo.SaveAsync();
@@ -30,7 +30,7 @@ public class OrderProductAPI
         .WithTags("orderProduct");
 
         //Изменить orderProduct
-        app.MapPut("/api/orderProduct", async ([FromBody] OrderProduct orderProduct, IOrderProductRepository repo) =>
+        app.MapPut("/api/order_product", async ([FromBody] OrderProduct orderProduct, IOrderProductRepository repo) =>
         {
             await repo.UpdateOrderProductAsync(orderProduct);
             await repo.SaveAsync();
@@ -43,7 +43,7 @@ public class OrderProductAPI
         .WithTags("orderProduct");
 
         //Удалить юзера
-        app.MapDelete("/api/orderProduct/{id}", async (int id, IOrderProductRepository repo) =>
+        app.MapDelete("/api/order_product/{id}", async (int id, IOrderProductRepository repo) =>
         {
             await repo.DeleteOrderProductAsync(id);
             await repo.SaveAsync();

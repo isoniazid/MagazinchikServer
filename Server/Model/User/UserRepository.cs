@@ -43,6 +43,7 @@ public class UserRepository : IUserRepository
 
     public async Task InsertUserAsync(User user)
     {
+        user.Password = HashPassword(user.Password, user.Email); //NB Вместо соли используется емейл, который уникален
         await _context.Users.AddAsync(user);
     }
 
@@ -60,20 +61,22 @@ public class UserRepository : IUserRepository
         userFromDb.Name = user.Name;
     }
 
-    public async Task<string> GetUserTokenAsync(int userId)
+
+
+    public UserDto GetUser(User user)
     {
-        var tokenFromDb = await _context.Tokens.Where(token => token.User.Id == userId).FirstOrDefaultAsync();
-        if(tokenFromDb == null) throw new APIException("No token for this user", StatusCodes.Status404NotFound);
-        return tokenFromDb.RefreshToken;
+        var userFromDb = _context.Users.FirstOrDefault(
+         u =>
+         string.Equals(u.Email, user.Email) &&
+         string.Equals(u.Password, HashPassword(user.Password,user.Email))) ?? throw new APIException("User not found", 404);
+        var userDto = new UserDto(userFromDb.Email, userFromDb.Id);
+        return userDto;
     }
 
-    public async Task CreateUserTokenAsync(int userId)
+    public string HashPassword(string password, string email)//Я не стал генерировать соль, потому что емейл у пользователя уже уникальный. Просто суммирую пароль и емейл и смотрю, чтобы все сошлось
     {
-        var userFromDb = await _context.Users.FindAsync(new object[] { userId });
-        if(userFromDb == null) throw new APIException("Can't create token because user with such id does not exist",StatusCodes.Status424FailedDependency);
-        var currentToken = new Token();
-        currentToken.User = userFromDb;
-        currentToken.RefreshToken = "ЖОПА";
-        await _context.Tokens.AddAsync(currentToken);
+        var encrypter = new System.Security.Cryptography.HMACSHA256();
+        encrypter.Key = Starter.passwordHashKey;
+        return Encoding.UTF8.GetString(encrypter.ComputeHash(Encoding.UTF8.GetBytes(password+email))) ?? throw new Exception("Incorrect values for HashPassword");
     }
 }

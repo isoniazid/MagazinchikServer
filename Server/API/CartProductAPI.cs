@@ -3,13 +3,13 @@ public class CartProductAPI
     public void Register(WebApplication app)
     {
         //Получить всех cartProduct
-        app.MapGet("/api/cartProduct", async (ICartProductRepository repo) => Results.Ok(await repo.GetCartProductsAsync()))
+        app.MapGet("/api/cart_product", async (ICartProductRepository repo) => Results.Ok(await repo.GetCartProductsAsync()))
         .Produces<List<CartProduct>>(StatusCodes.Status200OK)
         .WithName("GetAllCartProduct")
         .WithTags("cartProduct");
 
         //Получить cartProduct по айди
-        app.MapGet("/api/cartProduct/{id}", async (int id, ICartProductRepository repo) => await repo.GetCartProductAsync(id) is CartProduct cartProduct
+        app.MapGet("/api/cart_product/{id}", async (int id, ICartProductRepository repo) => await repo.GetCartProductAsync(id) is CartProduct cartProduct
         ? Results.Ok(cartProduct)
         : Results.NotFound())
         .Produces<CartProduct>(StatusCodes.Status200OK)
@@ -18,7 +18,7 @@ public class CartProductAPI
         .WithTags("cartProduct");
 
         //Добавить cartProduct с параметрами
-        app.MapPost("/api/cartProduct", async ([FromBody] CartProduct cartProduct, ICartProductRepository repo) =>
+        app.MapPost("/api/cart_product", async ([FromBody] CartProduct cartProduct, ICartProductRepository repo) =>
         {
             await repo.InsertCartProductAsync(cartProduct);
             await repo.SaveAsync();
@@ -30,7 +30,7 @@ public class CartProductAPI
         .WithTags("cartProduct");
 
         //Изменить cartProduct
-        app.MapPut("/api/cartProduct", async ([FromBody] CartProduct cartProduct, ICartProductRepository repo) =>
+        app.MapPut("/api/cart_product", async ([FromBody] CartProduct cartProduct, ICartProductRepository repo) =>
         {
             await repo.UpdateCartProductAsync(cartProduct);
             await repo.SaveAsync();
@@ -43,7 +43,7 @@ public class CartProductAPI
         .WithTags("cartProduct");
 
         //Удалить юзера
-        app.MapDelete("/api/cartProduct/{id}", async (int id, ICartProductRepository repo) =>
+        app.MapDelete("/api/cart_product/{id}", async (int id, ICartProductRepository repo) =>
         {
             await repo.DeleteCartProductAsync(id);
             await repo.SaveAsync();

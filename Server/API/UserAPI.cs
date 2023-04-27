@@ -3,7 +3,7 @@ public class UserAPI
     public void Register(WebApplication app)
     {
         //Получить всех юзеров
-        app.MapGet("/api/user", async (IUserRepository repo) => Results.Ok(await repo.GetUsersAsync()))
+        app.MapGet("/api/user", [Authorize] async (IUserRepository repo) => Results.Ok(await repo.GetUsersAsync()))
         .Produces<List<User>>(StatusCodes.Status200OK)
         .WithName("GetAllUser")
         .WithTags("user");
@@ -15,25 +15,6 @@ public class UserAPI
         .Produces<User>(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status404NotFound)
         .WithName("GetUser by id")
-        .WithTags("user");
-
-        //Получить Token юзера по айди
-        app.MapGet("/api/user/token/{id}", async (int id, IUserRepository repo) => Results.Ok(await repo.GetUserTokenAsync(id)))
-        .Produces<Token>(StatusCodes.Status200OK)
-        .Produces(StatusCodes.Status404NotFound)
-        .WithName("GetUser Token by id")
-        .WithTags("user");
-
-        //Создать Token юзера по айди
-        app.MapPost("/api/user/token/{id}", async (int id, IUserRepository repo) =>
-        {
-            await repo.CreateUserTokenAsync(id);
-            await repo.SaveAsync();
-            return Results.Ok();
-        })
-        .Produces(StatusCodes.Status200OK)
-        .Produces(StatusCodes.Status404NotFound)
-        .WithName("Create User Token by id")
         .WithTags("user");
 
         //Добавить юзера с параметрами
@@ -71,6 +52,24 @@ public class UserAPI
         .WithName("DeleteUser")
         .Produces(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status404NotFound)
+        .WithTags("user");
+
+        app.MapPost("api/user/login", [AllowAnonymous] /*async*/ ([FromBody] UserAuthDto inputUser, ITokenService tokenService, IUserRepository repo) =>
+        {
+            User user = new()
+            {
+                Email = inputUser.email,
+                Password = inputUser.password
+            };
+            var userDto = repo.GetUser(user);
+            if (userDto == null) return Results.Unauthorized();
+            var token = tokenService.BuildToken(app.Configuration["Jwt:Key"],
+            app.Configuration["Jwt:Issuer"], userDto);
+            return Results.Ok(token);
+        }).WithName("Login")
+        .Accepts<UserAuthDto>("application/json")
+        .Produces(StatusCodes.Status200OK)
+        .Produces(StatusCodes.Status401Unauthorized)
         .WithTags("user");
     }
 }

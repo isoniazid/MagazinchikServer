@@ -4,15 +4,15 @@ public interface IUserRepository : IDisposable
 
     Task<User> GetUserAsync(int userId);
 
-    Task<string> GetUserTokenAsync(int userId);
-
-    Task CreateUserTokenAsync(int userId);
-
     Task InsertUserAsync(User user);
 
     Task UpdateUserAsync(User user);
 
     Task DeleteUserAsync(int userId);
+
+    UserDto GetUser(User user);
+
+    string HashPassword(string password, string email);
 
     Task SaveAsync();
 }

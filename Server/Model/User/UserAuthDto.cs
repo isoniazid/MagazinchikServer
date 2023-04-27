@@ -1,0 +1,1 @@
+public record UserAuthDto (string email, string password);

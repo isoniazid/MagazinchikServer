@@ -1,9 +1,39 @@
 public static class Starter
 {
+
+    public static readonly byte[] passwordHashKey = Encoding.UTF8.GetBytes("Здарова Вовчик, а ты че исходники смотришь мои?");
+
+
     public static void RegisterServices(WebApplicationBuilder builder)
     {
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
+        builder.Services.AddSwaggerGen(setup =>
+{
+    // Include 'SecurityScheme' to use JWT Authentication
+    var jwtSecurityScheme = new OpenApiSecurityScheme
+    {
+        BearerFormat = "JWT",
+        Name = "JWT Authentication",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = JwtBearerDefaults.AuthenticationScheme,
+        Description = "Put **_ONLY_** your JWT Bearer token on textbox below!",
+
+        Reference = new OpenApiReference
+        {
+            Id = JwtBearerDefaults.AuthenticationScheme,
+            Type = ReferenceType.SecurityScheme
+        }
+    };
+
+    setup.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
+
+    setup.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        { jwtSecurityScheme, Array.Empty<string>() }
+    });
+
+});
 
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
         {
@@ -22,13 +52,39 @@ public static class Starter
         builder.Services.AddScoped<ICartProductRepository, CartProductRepository>();
         builder.Services.AddScoped<ICartRepository, CartRepository>();
         builder.Services.AddScoped<IActivationRepository, ActivationRepository>();
+        
+        builder.Services.AddSingleton<ITokenService> (new TokenService());
+
+        builder.Services.AddAuthorization();
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options => options.TokenValidationParameters = ConfigureJwtBearer(builder));
+        
+
+
 
         builder.Services.AddCors();
+    }
+
+
+    public static TokenValidationParameters ConfigureJwtBearer(WebApplicationBuilder builder)
+    {
+        return new() 
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? throw new Exception("Отсутствует ключ!")))
+        };
     }
 
     public static void Configure(WebApplication app)
     {
         app.UseMiddleware<ExceptionHandlerMiddleware>();
+        app.UseAuthentication();
+        app.UseAuthorization();
 
         if (app.Environment.IsDevelopment())
         {
