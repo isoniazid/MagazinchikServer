@@ -53,8 +53,24 @@ public class UserAPI
         .Produces(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status404NotFound)
         .WithTags("user");
+    
+        //Обновить аксесс токен
+        app.MapPost("api/user/refresh", [AllowAnonymous] async ([FromBody] string refreshToken, ITokenService tokenService, IUserRepository repo, IRefreshTokenRepository tokenRepo) =>
+        {
+            var currentRefreshToken = await tokenRepo.GetTokenAsync(refreshToken);
+            if (currentRefreshToken.Expires < DateTime.UtcNow) throw new APIException($"RefreshToken протух. Он был валиден до даты: {currentRefreshToken.Expires}", StatusCodes.Status401Unauthorized);
 
-        app.MapPost("api/user/login", [AllowAnonymous] /*async*/ ([FromBody] UserAuthDto inputUser, ITokenService tokenService, IUserRepository repo) =>
+            var newAccessToken = tokenService.Refresh(app.Configuration["Jwt:Key"] ?? throw new Exception("JWT:Key mustn't be null!"),
+            app.Configuration["Jwt:Issuer"] ?? throw new Exception("Jwt:Issuer mustn't be null!"), currentRefreshToken);
+            return Results.Ok(newAccessToken);
+        }).WithName("Refresh token")
+        .Accepts<string>("application/json")
+        .Produces(StatusCodes.Status200OK)
+        .Produces(StatusCodes.Status401Unauthorized)
+        .WithTags("user");
+
+        //Залогиниться и получить два токена
+        app.MapPost("api/user/login", [AllowAnonymous] async ([FromBody] UserAuthDto inputUser, ITokenService tokenService, IUserRepository repo, IRefreshTokenRepository tokenRepo) =>
         {
             User user = new()
             {
@@ -65,10 +81,18 @@ public class UserAPI
             if (userDto == null) return Results.Unauthorized();
             var token = tokenService.BuildToken(app.Configuration["Jwt:Key"] ?? throw new Exception("JWT:Key mustn't be null!"),
             app.Configuration["Jwt:Issuer"] ?? throw new Exception("Jwt:Issuer mustn't be null!"), userDto);
-            return Results.Ok(token);
+
+            var refreshToken = tokenService.BuildRefreshToken();
+
+            refreshToken.User = await repo.GetUserAsync(userDto.id) ?? throw new Exception($"User with id {userDto.id} no found");
+            await tokenRepo.InsertTokenAsync(refreshToken);
+            await tokenRepo.SaveAsync();
+
+
+            return Results.Ok(new UserTokensDto(token, refreshToken));
         }).WithName("Login")
         .Accepts<UserAuthDto>("application/json")
-        .Produces(StatusCodes.Status200OK)
+        .Produces<UserTokensDto>(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status401Unauthorized)
         .WithTags("user");
     }

@@ -1,8 +1,8 @@
-public class TokenRepository : ITokenRepository
+public class RefreshTokenRepository : IRefreshTokenRepository
 {
     private readonly ApplicationDbContext _context;
     private bool _disposed = false;
-    public TokenRepository(ApplicationDbContext context)
+    public RefreshTokenRepository(ApplicationDbContext context)
     {
         _context = context;
     }
@@ -29,19 +29,19 @@ public class TokenRepository : ITokenRepository
         GC.SuppressFinalize(this);
     }
 
-    public async Task<Token> GetTokenAsync(int tokenId)
+    public async Task<RefreshToken> GetTokenAsync(int tokenId)
     {
         var result = await _context.Tokens.Include(t => t.User).FirstOrDefaultAsync(t => t.Id == tokenId);
         //var result = await _context.Tokens.FindAsync(new object[] { tokenId });
         if (result == null) throw new APIException("No such token", StatusCodes.Status404NotFound);
         else return result;
     }
-    public async Task<List<Token>> GetTokensAsync()
+    public async Task<List<RefreshToken>> GetTokensAsync()
     {
         return await _context.Tokens.ToListAsync();
     }
 
-    public async Task InsertTokenAsync(Token token)
+    public async Task InsertTokenAsync(RefreshToken token)
     {
         await _context.Tokens.AddAsync(token);
     }
@@ -51,14 +51,22 @@ public class TokenRepository : ITokenRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task UpdateTokenAsync(Token token)
+    public async Task UpdateTokenAsync(RefreshToken token)
     {
         var tokenFromDb = await _context.Tokens.FindAsync(new object[] { token.Id });
         if (tokenFromDb == null) throw new APIException("No such token", StatusCodes.Status404NotFound);
         
-        foreach(var prop in typeof(Token).GetProperties(BindingFlags.Public))
+        foreach(var prop in typeof(RefreshToken).GetProperties(BindingFlags.Public))
         {
             prop.SetValue(tokenFromDb, prop.GetValue(token)); //NB обобщил
         }
+    }
+
+    public async Task<RefreshToken> GetTokenAsync(string tokenValue)
+    {
+         var result = await _context.Tokens.Include(t => t.User).FirstOrDefaultAsync(t => t.Value == tokenValue);
+        //var result = await _context.Tokens.FindAsync(new object[] { tokenId });
+        if (result == null) throw new APIException("No such token", StatusCodes.Status404NotFound);
+        else return result;
     }
 }

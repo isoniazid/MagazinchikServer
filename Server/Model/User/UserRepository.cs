@@ -77,6 +77,6 @@ public class UserRepository : IUserRepository
     {
         var encrypter = new System.Security.Cryptography.HMACSHA256();
         encrypter.Key = Starter.passwordHashKey;
-        return Encoding.UTF8.GetString(encrypter.ComputeHash(Encoding.UTF8.GetBytes(password+email))) ?? throw new Exception("Incorrect values for HashPassword");
+        return Convert.ToBase64String(encrypter.ComputeHash(Encoding.UTF8.GetBytes(password+email))) ?? throw new Exception("Incorrect values for HashPassword");
     }
 }

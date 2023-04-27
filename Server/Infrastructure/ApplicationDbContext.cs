@@ -13,7 +13,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Product> Products => Set<Product>();
     public DbSet<ProductPhoto> ProductPhotos => Set<ProductPhoto>();
     public DbSet<Rate> Rates => Set<Rate>();
-    public DbSet<Token> Tokens => Set<Token>();
+    public DbSet<RefreshToken> Tokens => Set<RefreshToken>();
     public DbSet<User> Users => Set<User>();
 
 

@@ -1,6 +1,6 @@
 public class TokenService : ITokenService
 {
-    private TimeSpan expiryDuration = new TimeSpan(0, 30, 0);
+    private TimeSpan expiryDuration = Starter.AccessTokenTime;
     public string BuildToken(string key, string issuer, UserDto user)
     {
         var claims = new[]
@@ -11,7 +11,7 @@ public class TokenService : ITokenService
 
         var secureKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
         var credentials = new SigningCredentials(secureKey, SecurityAlgorithms.HmacSha256Signature);
-        
+
         var tokenDescriptor = new JwtSecurityToken(
             issuer,
              issuer,
@@ -21,5 +21,23 @@ public class TokenService : ITokenService
              );
 
         return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
+    }
+
+    public RefreshToken BuildRefreshToken()
+    {
+        var rTokenVal = new byte[32];
+        var rndGen = new System.Random();
+        rndGen.NextBytes(rTokenVal);
+        return new RefreshToken
+        {
+            Value = Convert.ToBase64String(rTokenVal),
+            Expires = DateTime.UtcNow+Starter.RefreshTokenTime
+        };
+    }
+
+    public string Refresh(string key, string issuer, RefreshToken token)
+    {
+        var userDto = new UserDto(token.User.Email, token.User.Id);
+        return BuildToken(key, issuer,userDto);
     }
 }

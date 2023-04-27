@@ -2,8 +2,8 @@ public static class Starter
 {
 
     public static readonly byte[] passwordHashKey = Encoding.UTF8.GetBytes("Здарова Вовчик, а ты че исходники смотришь мои?");
-
-
+    public static readonly TimeSpan AccessTokenTime = new TimeSpan(0,30,0);
+    public static readonly TimeSpan RefreshTokenTime = new TimeSpan(30,0,0);
     public static void RegisterServices(WebApplicationBuilder builder)
     {
         builder.Services.AddEndpointsApiExplorer();
@@ -42,7 +42,7 @@ public static class Starter
 
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<IProductRepository, ProductRepository>();
-        builder.Services.AddScoped<ITokenRepository, TokenRepository>();
+        builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         builder.Services.AddScoped<IRateRepository, RateRepository>();
         builder.Services.AddScoped<IProductPhotoRepository, ProductPhotoRepository>();
         builder.Services.AddScoped<IOrderProductRepository, OrderProductRepository>();
@@ -116,7 +116,6 @@ public static class Starter
         new OrderProductAPI().Register(app);
         new ProductPhotoAPI().Register(app);
         new RateAPI().Register(app);
-        new TokenAPI().Register(app);
     }
 
 }
