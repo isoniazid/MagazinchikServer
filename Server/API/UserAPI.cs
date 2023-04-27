@@ -63,8 +63,8 @@ public class UserAPI
             };
             var userDto = repo.GetUser(user);
             if (userDto == null) return Results.Unauthorized();
-            var token = tokenService.BuildToken(app.Configuration["Jwt:Key"],
-            app.Configuration["Jwt:Issuer"], userDto);
+            var token = tokenService.BuildToken(app.Configuration["Jwt:Key"] ?? throw new Exception("JWT:Key mustn't be null!"),
+            app.Configuration["Jwt:Issuer"] ?? throw new Exception("Jwt:Issuer mustn't be null!"), userDto);
             return Results.Ok(token);
         }).WithName("Login")
         .Accepts<UserAuthDto>("application/json")
