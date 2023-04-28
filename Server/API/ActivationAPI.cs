@@ -32,6 +32,7 @@ public class ActivationAPI
         //Изменить activation
         app.MapPut("/api/activation", async ([FromBody] Activation activation, IActivationRepository repo) =>
         {
+            
             await repo.UpdateActivationAsync(activation);
             await repo.SaveAsync();
             return Results.Ok();

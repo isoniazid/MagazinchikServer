@@ -32,6 +32,7 @@ public class RateAPI
         //Изменить rate
         app.MapPut("/api/rate", async ([FromBody] Rate rate, IRateRepository repo) =>
         {
+             
             await repo.UpdateRateAsync(rate);
             await repo.SaveAsync();
             return Results.Ok();

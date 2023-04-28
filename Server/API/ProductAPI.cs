@@ -29,6 +29,7 @@ public class ProductAPI
         //Добавить product с параметрами
         app.MapPost("/api/product", async ([FromBody] Product product, IProductRepository repo) =>
         {
+            
             await repo.InsertProductAsync(product);
             await repo.SaveAsync();
             return Results.Created($"/api/{product.Id}", product);
@@ -41,6 +42,7 @@ public class ProductAPI
         //Изменить product
         app.MapPut("/api/product", async ([FromBody] Product product, IProductRepository repo) =>
         {
+             
             await repo.UpdateProductAsync(product);
             await repo.SaveAsync();
             return Results.Ok();

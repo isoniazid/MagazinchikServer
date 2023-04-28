@@ -1,4 +1,4 @@
-public class OrderProduct
+public class OrderProduct : Traceable
 {
     public int Id { get; set; }
     public int ProductCount { get; set; }

@@ -32,6 +32,7 @@ public class OrderAPI
         //Изменить order
         app.MapPut("/api/order", async ([FromBody] Order order, IOrderRepository repo) =>
         {
+             
             await repo.UpdateOrderAsync(order);
             await repo.SaveAsync();
             return Results.Ok();

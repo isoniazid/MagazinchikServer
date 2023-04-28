@@ -43,6 +43,7 @@ public class UserRepository : IUserRepository
 
     public async Task InsertUserAsync(User user)
     {
+        user.CreatedNow();
         user.Password = HashPassword(user.Password, user.Email); //NB Вместо соли используется емейл, который уникален
         await _context.Users.AddAsync(user);
     }
@@ -56,9 +57,12 @@ public class UserRepository : IUserRepository
     {
         var userFromDb = await _context.Users.FindAsync(new object[] { user.Id });
         if (userFromDb == null) throw new APIException("No such user", StatusCodes.Status404NotFound);
+
+        userFromDb.Update();
         userFromDb.Id = user.Id;
         userFromDb.Email = user.Email;
         userFromDb.Name = user.Name;
+        userFromDb.Role = user.Role;
     }
 
 
