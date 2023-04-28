@@ -60,4 +60,10 @@ public class ProductRepository : IProductRepository
             prop.SetValue(productFromDb, prop.GetValue(product)); //NB обобщил
         }
     }
+
+    public async Task<Product> GetProductAsync(string slug)
+    {
+        return await _context.Products.FirstOrDefaultAsync(u => string.Equals(u.Slug, slug)) ?? throw new APIException("No such product", StatusCodes.Status404NotFound);
+    }
 }
+

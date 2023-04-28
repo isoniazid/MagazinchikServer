@@ -1,0 +1,6 @@
+    public async Task<string> GetUserTokenAsync(int userId)
+    {
+        var tokenFromDb = await _context.Tokens.Where(token => token.User.Id == userId).FirstOrDefaultAsync();
+        if (tokenFromDb == null) throw new APIException("No token for this user", StatusCodes.Status404NotFound);
+        return tokenFromDb.RefreshToken;
+    }

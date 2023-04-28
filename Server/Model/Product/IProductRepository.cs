@@ -6,6 +6,8 @@ public interface IProductRepository : IDisposable
 
     Task<Product> GetProductAsync(int productId);
 
+    Task<Product> GetProductAsync (string slug);
+
     Task InsertProductAsync(Product product);
 
     Task UpdateProductAsync(Product product);

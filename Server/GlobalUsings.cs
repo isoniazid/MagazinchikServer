@@ -11,3 +11,4 @@ global using Microsoft.AspNetCore.Authentication;
 global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.OpenApi.Models; // Для сваггера
 global using System.Text.Json.Serialization; //Лютая тема для JsonIgnore
+global using SlugGenerator; //генератор слагов

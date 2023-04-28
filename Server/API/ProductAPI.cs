@@ -17,6 +17,15 @@ public class ProductAPI
         .WithName("GetProduct by id")
         .WithTags("product");
 
+        //получить product по слагу
+        app.MapGet("/api/product/slug/{slug}", async (string slug, IProductRepository repo) => await repo.GetProductAsync(slug) is Product product
+        ? Results.Ok(product)
+        : Results.NotFound())
+        .Produces<Product>(StatusCodes.Status200OK)
+        .Produces(StatusCodes.Status404NotFound)
+        .WithName("GetProduct by slug")
+        .WithTags("product");
+
         //Добавить product с параметрами
         app.MapPost("/api/product", async ([FromBody] Product product, IProductRepository repo) =>
         {
