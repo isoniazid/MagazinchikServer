@@ -20,7 +20,6 @@ public class UserAPI
         //Добавить юзера с параметрами
         app.MapPost("/api/user", async ([FromBody] User user, IUserRepository repo) =>
         {
-            user.CreatedNow();
             await repo.InsertUserAsync(user);
             await repo.SaveAsync();
             return Results.Created($"/api/{user.Id}", user);
@@ -33,7 +32,6 @@ public class UserAPI
         //Изменить юзера
         app.MapPut("/api/user", async ([FromBody] User user, IUserRepository repo) =>
         {
-            user.Update();
             await repo.UpdateUserAsync(user);
             await repo.SaveAsync();
             return Results.Ok();
