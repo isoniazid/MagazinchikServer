@@ -32,6 +32,7 @@ public class OrderProductAPI
         //Изменить orderProduct
         app.MapPut("/api/order_product", async ([FromBody] OrderProduct orderProduct, IOrderProductRepository repo) =>
         {
+             
             await repo.UpdateOrderProductAsync(orderProduct);
             await repo.SaveAsync();
             return Results.Ok();

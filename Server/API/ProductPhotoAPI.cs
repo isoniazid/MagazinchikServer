@@ -32,6 +32,7 @@ public class ProductPhotoAPI
         //Изменить productPhoto
         app.MapPut("/api/product_photo", async ([FromBody] ProductPhoto productPhoto, IProductPhotoRepository repo) =>
         {
+             
             await repo.UpdateProductPhotoAsync(productPhoto);
             await repo.SaveAsync();
             return Results.Ok();

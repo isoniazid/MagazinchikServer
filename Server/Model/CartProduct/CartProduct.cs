@@ -1,4 +1,4 @@
-public class CartProduct
+public class CartProduct : Traceable
 {
     public int Id { get; set; }
     public int ProductCount { get; set; }

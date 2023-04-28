@@ -1,4 +1,4 @@
-public class ProductPhoto
+public class ProductPhoto : Traceable
 {
     public int Id { get; set; }
     //public int ProductId { get; set; }

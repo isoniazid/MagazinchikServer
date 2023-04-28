@@ -32,6 +32,7 @@ public class CommentAPI
         //Изменить comment
         app.MapPut("/api/comment", async ([FromBody] Comment comment, ICommentRepository repo) =>
         {
+             
             await repo.UpdateCommentAsync(comment);
             await repo.SaveAsync();
             return Results.Ok();

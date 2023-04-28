@@ -32,6 +32,7 @@ public class FavouriteAPI
         //Изменить favourite
         app.MapPut("/api/favourite", async ([FromBody] Favourite favourite, IFavouriteRepository repo) =>
         {
+             
             await repo.UpdateFavouriteAsync(favourite);
             await repo.SaveAsync();
             return Results.Ok();

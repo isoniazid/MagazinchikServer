@@ -32,6 +32,7 @@ public class CartProductAPI
         //Изменить cartProduct
         app.MapPut("/api/cart_product", async ([FromBody] CartProduct cartProduct, ICartProductRepository repo) =>
         {
+             
             await repo.UpdateCartProductAsync(cartProduct);
             await repo.SaveAsync();
             return Results.Ok();

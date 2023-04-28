@@ -1,4 +1,4 @@
-public class Favourite
+public class Favourite : Traceable
 {
     public int Id { get; set; }
     /* public int UserId { get; set; } */

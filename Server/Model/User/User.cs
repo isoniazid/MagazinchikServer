@@ -1,4 +1,4 @@
-public class User
+public class User : Traceable
 {
     public int Id { get; set; }
 

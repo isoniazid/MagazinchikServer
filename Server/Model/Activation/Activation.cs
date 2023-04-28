@@ -1,4 +1,4 @@
-public class Activation
+public class Activation : Traceable
 {
     public int Id { get; set; }
     public bool IsActivated { get; set; }

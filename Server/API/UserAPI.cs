@@ -53,7 +53,7 @@ public class UserAPI
         .Produces(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status404NotFound)
         .WithTags("user");
-    
+
         //Обновить аксесс токен
         app.MapPost("api/user/refresh", [AllowAnonymous] async ([FromBody] string refreshToken, ITokenService tokenService, IUserRepository repo, IRefreshTokenRepository tokenRepo) =>
         {
