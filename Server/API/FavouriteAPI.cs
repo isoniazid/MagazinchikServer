@@ -2,6 +2,9 @@ public class FavouriteAPI
 {
     public void Register(WebApplication app)
     {
+
+        return;
+
         //Получить всех favourite
         app.MapGet("/api/favourite", async (IFavouriteRepository repo) => Results.Ok(await repo.GetFavouritesAsync()))
         .Produces<List<Favourite>>(StatusCodes.Status200OK)

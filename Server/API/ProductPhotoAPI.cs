@@ -2,6 +2,9 @@ public class ProductPhotoAPI
 {
     public void Register(WebApplication app)
     {
+
+        return;
+
         //Получить всех productPhoto
         app.MapGet("/api/product_photo", async (IProductPhotoRepository repo) => Results.Ok(await repo.GetProductPhotosAsync()))
         .Produces<List<ProductPhoto>>(StatusCodes.Status200OK)

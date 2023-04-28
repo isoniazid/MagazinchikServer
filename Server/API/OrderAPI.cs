@@ -2,6 +2,9 @@ public class OrderAPI
 {
     public void Register(WebApplication app)
     {
+
+        return;
+
         //Получить всех order
         app.MapGet("/api/order", async (IOrderRepository repo) => Results.Ok(await repo.GetOrdersAsync()))
         .Produces<List<Order>>(StatusCodes.Status200OK)

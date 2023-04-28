@@ -2,6 +2,8 @@ public class ActivationAPI
 {
     public void Register(WebApplication app)
     {
+        return;
+
         //Получить всех activation
         app.MapGet("/api/activation", async (IActivationRepository repo) => Results.Ok(await repo.GetActivationsAsync()))
         .Produces<List<Activation>>(StatusCodes.Status200OK)

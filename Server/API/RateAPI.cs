@@ -2,6 +2,9 @@ public class RateAPI
 {
     public void Register(WebApplication app)
     {
+
+        return;
+
         //Получить всех rate
         app.MapGet("/api/rate", async (IRateRepository repo) => Results.Ok(await repo.GetRatesAsync()))
         .Produces<List<Rate>>(StatusCodes.Status200OK)
