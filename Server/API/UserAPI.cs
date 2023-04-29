@@ -57,17 +57,17 @@ public class UserAPI
         //Обновить аксесс токен
         app.MapGet("api/user/refresh", [AllowAnonymous] async (HttpContext httpContext, ITokenService tokenService, IUserRepository repo, IRefreshTokenRepository tokenRepo) =>
         {
-            
-            
+
+
             string refreshTokenFromCookies = httpContext.Request.Cookies["refresh_token"] ?? throw new APIException("Отсутствует RefreshToken в cookie", StatusCodes.Status401Unauthorized);
 
             var currentRefreshToken = await tokenRepo.GetTokenAsync(refreshTokenFromCookies);
-            
+
             //Если токен сгорел
             if (currentRefreshToken.Expires < DateTime.UtcNow) throw new APIException($"RefreshToken протух. Он был валиден до даты: {currentRefreshToken.Expires}", StatusCodes.Status401Unauthorized);
 
             //Если токен скоро сгорит...
-            if(currentRefreshToken.Expires-Starter.RefreshTokenThreshold < DateTime.UtcNow) 
+            if (currentRefreshToken.Expires - Starter.RefreshTokenThreshold < DateTime.UtcNow)
             {
                 currentRefreshToken = tokenService.BuildRefreshToken(currentRefreshToken.User);
                 await tokenRepo.InsertTokenAsync(currentRefreshToken);
@@ -84,7 +84,7 @@ public class UserAPI
         .WithTags("user");
 
         //Залогиниться и получить два токена
-        app.MapPost("api/user/login", [AllowAnonymous] async (HttpContext httpContext,[FromBody] UserAuthDto inputUser, ITokenService tokenService, IUserRepository repo, IRefreshTokenRepository tokenRepo) =>
+        app.MapPost("api/user/login", [AllowAnonymous] async (HttpContext httpContext, [FromBody] UserAuthDto inputUser, ITokenService tokenService, IUserRepository repo, IRefreshTokenRepository tokenRepo) =>
         {
             User user = new()
             {
@@ -102,7 +102,7 @@ public class UserAPI
             await tokenRepo.InsertTokenAsync(refreshToken);
             await tokenRepo.SaveAsync();
 
-            SaveToCookies(httpContext,refreshToken);
+            SaveToCookies(httpContext, refreshToken);
 
 
             return Results.Ok(new UserTokensDto(token, refreshToken));
@@ -116,11 +116,11 @@ public class UserAPI
 
     private void SaveToCookies(HttpContext context, RefreshToken token)
     {
-        if(context.Request.Cookies.ContainsKey("refresh_token"))
+        if (context.Request.Cookies.ContainsKey("refresh_token"))
         {
             context.Response.Cookies.Delete("refresh_token");
         }
 
-            context.Response.Cookies.Append("refresh_token",token.Value, new CookieOptions() {Secure=true, HttpOnly = true});
+        context.Response.Cookies.Append("refresh_token", token.Value, new CookieOptions() { Secure = true, HttpOnly = true, MaxAge = new TimeSpan(45,0,0,0) });
     }
 }
