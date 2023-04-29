@@ -3,7 +3,7 @@ public class OrderProductAPI
     public void Register(WebApplication app)
     {
 
-        return;
+        
 
         //Получить всех orderProduct
         app.MapGet("/api/order_product", async (IOrderProductRepository repo) => Results.Ok(await repo.GetOrderProductsAsync()))

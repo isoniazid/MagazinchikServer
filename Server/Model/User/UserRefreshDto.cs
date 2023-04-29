@@ -1,0 +1,1 @@
+public record UserRefreshDto(User user, string AccessToken);

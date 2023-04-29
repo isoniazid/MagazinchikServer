@@ -2,9 +2,6 @@ public class CommentAPI
 {
     public void Register(WebApplication app)
     {
-        return;
-
-
         //Получить всех comment
         app.MapGet("/api/comment", async (ICommentRepository repo) => Results.Ok(await repo.GetCommentsAsync()))
         .Produces<List<Comment>>(StatusCodes.Status200OK)

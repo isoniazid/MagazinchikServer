@@ -23,15 +23,23 @@ public class TokenService : ITokenService
         return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
     }
 
-    public RefreshToken BuildRefreshToken()
+    public RefreshToken BuildRefreshToken(User user)
     {
-        var rTokenVal = new byte[32];
+        var rtokenStr = Encoding.UTF8.GetBytes(user.Email+user.Id+DateTime.UtcNow.ToString());
+        var rTokenSeed = new byte[32];
         var rndGen = new System.Random();
-        rndGen.NextBytes(rTokenVal);
+        rndGen.NextBytes(rTokenSeed);
+
+        var rTokenVal = rtokenStr.Concat(rTokenSeed).ToArray();
+
+        var encrypter = new System.Security.Cryptography.HMACSHA256();
+        encrypter.Key = Starter.RefreshHashKey;
+
         return new RefreshToken
         {
-            Value = Convert.ToBase64String(rTokenVal),
-            Expires = DateTime.UtcNow+Starter.RefreshTokenTime
+            Value = Convert.ToBase64String(encrypter.ComputeHash(rTokenVal)),
+            User = user,
+            Expires = DateTime.UtcNow+Starter.RefreshTokenTime,
         };
     }
 

@@ -2,8 +2,13 @@ public static class Starter
 {
 
     public static readonly byte[] passwordHashKey = Encoding.UTF8.GetBytes("Здарова Вовчик, а ты че исходники смотришь мои?");
+
+    public static readonly byte[] RefreshHashKey = Encoding.UTF8.GetBytes("Это ключ для хеширования рефреш токенов. Кста Вовыч здарова как жизнь?");
     public static readonly TimeSpan AccessTokenTime = new TimeSpan(0,30,0);
-    public static readonly TimeSpan RefreshTokenTime = new TimeSpan(30,0,0);
+    public static readonly TimeSpan RefreshTokenTime = new TimeSpan(30,0,0,0);
+
+    public static readonly TimeSpan RefreshTokenThreshold = new TimeSpan(5,0,0,0);
+
     public static void RegisterServices(WebApplicationBuilder builder)
     {
         builder.Services.AddEndpointsApiExplorer();
@@ -107,7 +112,7 @@ public static class Starter
     {
         new UserAPI().Register(app);
         new ProductAPI().Register(app);
-        new ActivationAPI().Register(app);
+      /*  new ActivationAPI().Register(app);
         new CartAPI().Register(app);
         new CartProductAPI().Register(app);
         new CommentAPI().Register(app);
@@ -115,7 +120,7 @@ public static class Starter
         new OrderAPI().Register(app);
         new OrderProductAPI().Register(app);
         new ProductPhotoAPI().Register(app);
-        new RateAPI().Register(app);
+        new RateAPI().Register(app);*/
     }
 
 }

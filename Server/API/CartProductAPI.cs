@@ -2,8 +2,6 @@ public class CartProductAPI
 {
     public void Register(WebApplication app)
     {
-        return;
-
 
         //Получить всех cartProduct
         app.MapGet("/api/cart_product", async (ICartProductRepository repo) => Results.Ok(await repo.GetCartProductsAsync()))

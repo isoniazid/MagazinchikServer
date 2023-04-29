@@ -56,10 +56,9 @@ public class RefreshTokenRepository : IRefreshTokenRepository
         var tokenFromDb = await _context.Tokens.FindAsync(new object[] { token.Id });
         if (tokenFromDb == null) throw new APIException("No such token", StatusCodes.Status404NotFound);
         
-        foreach(var prop in typeof(RefreshToken).GetProperties(BindingFlags.Public))
-        {
-            prop.SetValue(tokenFromDb, prop.GetValue(token)); //NB обобщил
-        }
+        tokenFromDb.Expires = token.Expires;
+        tokenFromDb.Value = token.Value;
+        tokenFromDb.User = token.User;
     }
 
     public async Task<RefreshToken> GetTokenAsync(string tokenValue)

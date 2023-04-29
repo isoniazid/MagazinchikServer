@@ -9,5 +9,6 @@ public class User : Traceable
 
     public string Name { get; set; } = string.Empty;
 
+    [JsonIgnore]
     public string Role { get; set; } = string.Empty; 
 }
