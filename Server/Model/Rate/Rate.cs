@@ -1,6 +1,6 @@
 public class Rate : Traceable
 {
-    public int Id { get; set; }
+    public int Id { get; private set; }
     public int Value { get; set; } //NB ENUM?
     //public int UserId { get; set; }
 

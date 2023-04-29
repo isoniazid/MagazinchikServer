@@ -1,7 +1,7 @@
 public class RefreshToken
 {
     
-    public int Id { get; set; }
+    public int Id { get; private set; }
     public string Value { get; set; } = string.Empty;
     //public int UserId { get; set; }
     [Required]

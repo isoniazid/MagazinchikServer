@@ -59,7 +59,6 @@ public class UserRepository : IUserRepository
         if (userFromDb == null) throw new APIException("No such user", StatusCodes.Status404NotFound);
 
         userFromDb.Update();
-        userFromDb.Id = user.Id;
         userFromDb.Email = user.Email;
         userFromDb.Name = user.Name;
         userFromDb.Role = user.Role;

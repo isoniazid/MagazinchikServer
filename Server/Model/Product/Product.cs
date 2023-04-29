@@ -1,7 +1,7 @@
 public class Product : Traceable
 {
 
-    public int Id { get; set; }
+    public int Id { get; private set; }
 
     private string _name = string.Empty;
     public string Name

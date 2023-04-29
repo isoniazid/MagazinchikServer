@@ -1,6 +1,6 @@
 public class User : Traceable
 {
-    public int Id { get; set; }
+    public int Id { get; private set; }
 
     [Required]
     public string Email { get; set; } = string.Empty;

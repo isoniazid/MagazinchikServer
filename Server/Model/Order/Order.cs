@@ -2,7 +2,7 @@
 
 public class Order : Traceable
 {
-    public int Id { get; set; }
+    public int Id { get; private set; }
     public decimal Price { get; set; }
     public string Status { get; set; } = String.Empty; //NB Enum?
    /*  public int UserId { get; set; } */

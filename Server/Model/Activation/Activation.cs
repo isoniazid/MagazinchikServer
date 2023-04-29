@@ -1,6 +1,6 @@
 public class Activation : Traceable
 {
-    public int Id { get; set; }
+    public int Id { get; private set; }
     public bool IsActivated { get; set; }
     public string Link { get; set; } = string.Empty;
     /* public int UserId { get; set; } */
