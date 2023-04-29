@@ -121,6 +121,6 @@ public class UserAPI
             context.Response.Cookies.Delete("refresh_token");
         }
 
-            context.Response.Cookies.Append("refresh_token",token.Value);
+            context.Response.Cookies.Append("refresh_token",token.Value, new CookieOptions() {Secure=true, HttpOnly = true});
     }
 }
