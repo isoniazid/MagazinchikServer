@@ -12,5 +12,7 @@ public interface IRefreshTokenRepository : IDisposable
 
     Task DeleteTokenAsync(int tokenId);
 
+    Task DeleteTokenAsync(string tokenVal);
+
     Task SaveAsync();
 }

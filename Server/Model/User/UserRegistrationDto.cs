@@ -1,0 +1,1 @@
+public record UserRegistrationDto(string email, string password, string name);

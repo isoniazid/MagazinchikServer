@@ -68,6 +68,9 @@ public class UserRepository : IUserRepository
 
     public UserDto GetUser(User user)
     {
+        Console.WriteLine($"USERS password that was entered: {user.Password}");
+        Console.WriteLine($"Hashed: {HashPassword(user.Password, user.Email)}");
+        Console.WriteLine($"Email: {user.Email}");
         var userFromDb = _context.Users.FirstOrDefault(
          u =>
          string.Equals(u.Email, user.Email) &&

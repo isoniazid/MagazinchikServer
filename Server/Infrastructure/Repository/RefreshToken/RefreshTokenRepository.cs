@@ -68,4 +68,10 @@ public class RefreshTokenRepository : IRefreshTokenRepository
         if (result == null) throw new APIException("No such token", StatusCodes.Status404NotFound);
         else return result;
     }
+
+    public async Task DeleteTokenAsync(string tokenVal)
+    {
+        var tokenFromDb = await _context.Tokens.FirstOrDefaultAsync(u => u.Value == tokenVal) ?? throw new APIException("Невозможно удалить токен, который не существует",StatusCodes.Status404NotFound);
+        _context.Tokens.Remove(tokenFromDb);
+    }
 }

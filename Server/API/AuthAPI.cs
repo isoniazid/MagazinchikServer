@@ -3,8 +3,10 @@ public class AuthAPI
     public void Register(WebApplication app)
     {
         //Добавить юзера с параметрами
-        app.MapPost("/api/auth/register", async (HttpContext httpContext, [FromBody] User user, IUserRepository repo, ITokenService tokenService, IRefreshTokenRepository tokenRepo) =>
+        app.MapPost("/api/auth/register", async (HttpContext httpContext, [FromBody] UserRegistrationDto userRegDto, IUserRepository repo, ITokenService tokenService, IRefreshTokenRepository tokenRepo) =>
         {
+            var user = new User() { Email = userRegDto.email, Password = userRegDto.password, Name = userRegDto.name };
+
             await repo.InsertUserAsync(user);
             await repo.SaveAsync();
 
@@ -21,14 +23,30 @@ public class AuthAPI
 
             return Results.Ok(new UserRefreshDto(new userNoDateDto(user.Id, user.Email, user.Name), token));
         })
-        .Accepts<User>("application/json")
+        .Accepts<UserRegistrationDto>("application/json")
         .Produces<UserRefreshDto>(StatusCodes.Status201Created)
         .WithName("Adds user by params")
         .WithTags("Auth");
 
 
-                //Обновить аксесс токен
-        app.MapGet("api/auth/refresh", [AllowAnonymous] async (HttpContext httpContext, ITokenService tokenService, IUserRepository repo, IRefreshTokenRepository tokenRepo) =>
+        //Выход из профиля с удалением рефреш токена из БД и куки
+        app.MapGet("/api/auth/logout", async (HttpContext httpContext, IRefreshTokenRepository tokenRepo) =>
+       {
+           string refreshTokenFromCookies = httpContext.Request.Cookies["refresh_token"] 
+           ?? throw new APIException("Невозможно удалить RefreshToken, т.к. он отсутствует в cookie", StatusCodes.Status404NotFound);
+
+
+           await tokenRepo.DeleteTokenAsync(refreshTokenFromCookies);
+           await tokenRepo.SaveAsync();
+           return Results.Ok();
+       }).WithName("Logout")
+       .Produces(StatusCodes.Status200OK)
+       .Produces(StatusCodes.Status401Unauthorized)
+       .WithTags("Auth");
+
+
+        //Обновить аксесс токен
+        app.MapGet("/api/auth/refresh", [AllowAnonymous] async (HttpContext httpContext, ITokenService tokenService, IUserRepository repo, IRefreshTokenRepository tokenRepo) =>
         {
 
 
@@ -57,7 +75,7 @@ public class AuthAPI
         .WithTags("Auth");
 
         //Залогиниться и получить два токена
-        app.MapPost("api/auth/login", [AllowAnonymous] async (HttpContext httpContext, [FromBody] UserAuthDto inputUser, ITokenService tokenService, IUserRepository repo, IRefreshTokenRepository tokenRepo) =>
+        app.MapPost("/api/auth/login", [AllowAnonymous] async (HttpContext httpContext, [FromBody] UserAuthDto inputUser, ITokenService tokenService, IUserRepository repo, IRefreshTokenRepository tokenRepo) =>
         {
             User user = new()
             {
@@ -78,7 +96,7 @@ public class AuthAPI
             SaveToCookies(httpContext, refreshToken);
 
 
-            return Results.Ok(new UserRefreshDto(new userNoDateDto(userFromDb.Id, userFromDb.Email, userFromDb.Name),token));
+            return Results.Ok(new UserRefreshDto(new userNoDateDto(userFromDb.Id, userFromDb.Email, userFromDb.Name), token));
         }).WithName("Login")
         .Accepts<UserAuthDto>("application/json")
         .Produces<UserRefreshDto>(StatusCodes.Status200OK)
@@ -86,14 +104,14 @@ public class AuthAPI
         .WithTags("Auth");
     }
 
-       private void SaveToCookies(HttpContext context, RefreshToken token)
+    private void SaveToCookies(HttpContext context, RefreshToken token)
     {
         if (context.Request.Cookies.ContainsKey("refresh_token"))
         {
             context.Response.Cookies.Delete("refresh_token");
         }
 
-        context.Response.Cookies.Append("refresh_token", token.Value, new CookieOptions() { Secure = true, HttpOnly = true, MaxAge = new TimeSpan(45,0,0,0) });
+        context.Response.Cookies.Append("refresh_token", token.Value, new CookieOptions() { Secure = true, HttpOnly = true, MaxAge = new TimeSpan(45, 0, 0, 0) });
     }
-    
+
 }
