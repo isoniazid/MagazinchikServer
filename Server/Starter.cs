@@ -104,6 +104,7 @@ public static class Starter
         app.UseCors(builder =>
         {
             builder.WithOrigins("http://localhost:3000");
+            builder.AllowCredentials();
             builder.AllowAnyHeader();
         });
     }
