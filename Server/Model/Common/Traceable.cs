@@ -1,7 +1,7 @@
 public abstract class Traceable
 {
     private DateTime _updated;
-
+    
     public DateTime CreatedAt
     {
         get; private set;

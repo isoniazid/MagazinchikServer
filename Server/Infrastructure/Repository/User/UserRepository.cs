@@ -33,7 +33,7 @@ public class UserRepository : IUserRepository
     public async Task<User> GetUserAsync(int userId)
     {
         var result = await _context.Users.FindAsync(new object[] { userId });
-        if (result == null) throw new APIException("No such user", StatusCodes.Status404NotFound);
+        if (result == null) throw new APIException("No such user", StatusCodes.Status400BadRequest);
         else return result;
     }
     public async Task<List<User>> GetUsersAsync()
@@ -71,7 +71,7 @@ public class UserRepository : IUserRepository
         var userFromDb = _context.Users.FirstOrDefault(
          u =>
          string.Equals(u.Email, user.Email) &&
-         string.Equals(u.Password, HashPassword(user.Password,user.Email))) ?? throw new APIException("User not found", 404);
+         string.Equals(u.Password, HashPassword(user.Password,user.Email))) ?? throw new APIException("User not found", 400);
         var userDto = new UserDto(userFromDb.Email, userFromDb.Id);
         return userDto;
     }

@@ -4,7 +4,7 @@ public class User : Traceable
 
     [Required]
     public string Email { get; set; } = string.Empty;
-    [Required]
+    [Required] [JsonIgnore]
     public string Password { get; set; } = string.Empty;
 
     public string Name { get; set; } = string.Empty;

@@ -1,1 +1,1 @@
-public record UserRefreshDto(User user, string AccessToken);
+public record UserRefreshDto(userNoDateDto user, string AccessToken);
