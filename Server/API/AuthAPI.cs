@@ -33,7 +33,7 @@ public class AuthAPI
         app.MapGet("/api/auth/logout", async (HttpContext httpContext, IRefreshTokenRepository tokenRepo) =>
        {
            string refreshTokenFromCookies = httpContext.Request.Cookies["refresh_token"] 
-           ?? throw new APIException("Невозможно удалить RefreshToken, т.к. он отсутствует в cookie", StatusCodes.Status404NotFound);
+           ?? throw new APIException("Невозможно удалить RefreshToken, т.к. он отсутствует в cookie", StatusCodes.Status401Unauthorized);
 
 
            await tokenRepo.DeleteTokenAsync(refreshTokenFromCookies);
