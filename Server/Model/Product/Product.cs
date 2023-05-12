@@ -49,5 +49,7 @@ public class Product : Traceable
     [JsonIgnore]
     public List<Rate> Rates { get; set; } = new();
 
+    [JsonIgnore]
+    public List<ProductPhoto> Photos {get; set;} = new();
 }
 

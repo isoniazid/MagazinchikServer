@@ -29,11 +29,33 @@ public class ProductRepository : IProductRepository
         GC.SuppressFinalize(this);
     }
 
-    public async Task<Product> GetProductAsync(int productId)
+    public async Task<ProductDto> GetProductDtoAsync(int productId)
     {
-        var result = await _context.Products.FindAsync(new object[] { productId });
-        if (result == null) throw new APIException("No such product", StatusCodes.Status404NotFound);
-        else return result;
+        var productFromDb = await _context.Products.FindAsync(new object[] { productId });
+        if (productFromDb == null) throw new APIException("No such product", StatusCodes.Status404NotFound);
+
+
+        var photosList = _context.ProductPhotos.ToList().Where(p => p.ProductId == productFromDb.Id);
+        List<int> photoIds = new List<int>();
+        if (photosList != null)
+        {
+            foreach (var photo in productFromDb.Photos)
+            {
+                photoIds.Add(photo.Id);
+            }
+        }
+
+        var result = new ProductDto(
+            productFromDb.Id,
+            productFromDb.Name,
+            productFromDb.Slug,
+            productFromDb.Price,
+            productFromDb.Description,
+            productFromDb.CommentsCount,
+            productFromDb.AverageRating,
+            photoIds.ToArray());
+
+        return result;
     }
     public async Task<List<Product>> GetProductsAsync()
     {
@@ -42,6 +64,7 @@ public class ProductRepository : IProductRepository
 
     public async Task InsertProductAsync(Product product)
     {
+        product.CreatedNow();
         await _context.Products.AddAsync(product);
     }
 
@@ -54,16 +77,51 @@ public class ProductRepository : IProductRepository
     {
         var productFromDb = await _context.Products.FindAsync(new object[] { product.Id });
         if (productFromDb == null) throw new APIException("No such product", StatusCodes.Status404NotFound);
-        
-        foreach(var prop in typeof(Product).GetProperties(BindingFlags.Public))
+
+        foreach (var prop in typeof(Product).GetProperties(BindingFlags.Public))
         {
             prop.SetValue(productFromDb, prop.GetValue(product)); //NB обобщил
         }
+
+        productFromDb.Update();
     }
 
-    public async Task<Product> GetProductAsync(string slug)
+    public async Task<ProductDto> GetProductDtoAsync(string slug)
     {
-        return await _context.Products.FirstOrDefaultAsync(u => string.Equals(u.Slug, slug)) ?? throw new APIException("No such product", StatusCodes.Status404NotFound);
+        var productFromDb = await _context.Products.FirstOrDefaultAsync(u => string.Equals(u.Slug, slug))
+        ?? throw new APIException("No such product", StatusCodes.Status404NotFound);
+
+
+        var photosList = _context.ProductPhotos.ToList().Where(p => p.ProductId == productFromDb.Id);
+        List<int> photoIds = new List<int>();
+        if (photosList != null)
+        {
+            foreach (var photo in productFromDb.Photos)
+            {
+                photoIds.Add(photo.Id);
+            }
+        }
+
+        var result = new ProductDto(
+            productFromDb.Id,
+            productFromDb.Name,
+            productFromDb.Slug,
+            productFromDb.Price,
+            productFromDb.Description,
+            productFromDb.CommentsCount,
+            productFromDb.AverageRating,
+            photoIds.ToArray());
+
+        return result;
+    }
+
+    public async Task<Product> GetProductAsync(int productId)
+    {
+        var productFromDb = await _context.Products.FindAsync(new object[] { productId })
+        ?? throw new APIException("No such product", StatusCodes.Status404NotFound);
+
+        return productFromDb;
+
     }
 }
 

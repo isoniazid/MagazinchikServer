@@ -114,6 +114,7 @@ public static class Starter
         new UserAPI().Register(app);
         new ProductAPI().Register(app);
         new AuthAPI().Register(app);
+        new ProductPhotoAPI().Register(app);
       /*  new ActivationAPI().Register(app);
         new CartAPI().Register(app);
         new CartProductAPI().Register(app);
@@ -121,7 +122,7 @@ public static class Starter
         new FavouriteAPI().Register(app);
         new OrderAPI().Register(app);
         new OrderProductAPI().Register(app);
-        new ProductPhotoAPI().Register(app);
+        
         new RateAPI().Register(app);*/
     }
 

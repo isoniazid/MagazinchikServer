@@ -7,12 +7,12 @@ public class ProductPhotoRepository : IProductPhotoRepository
         _context = context;
     }
 
-    public async Task DeleteProductPhotoAsync(int productPhotoId)
+/*     public async Task DeleteProductPhotoAsync(int productPhotoId)
     {
         var productPhotoFromDb = await _context.ProductPhotos.FindAsync(new object[] { productPhotoId });
         if (productPhotoFromDb == null) throw new APIException($"No such productPhoto with id {productPhotoId}", StatusCodes.Status404NotFound);
         _context.ProductPhotos.Remove(productPhotoFromDb);
-    }
+    } */
 
     protected virtual void Dispose(bool disposing)
     {
@@ -35,10 +35,17 @@ public class ProductPhotoRepository : IProductPhotoRepository
         if (result == null) throw new APIException("No such productPhoto", StatusCodes.Status404NotFound);
         else return result;
     }
-    public async Task<List<ProductPhoto>> GetProductPhotosAsync()
+
+
+    public async Task<int> GetLastId()
+    {
+        var result = await _context.ProductPhotos.OrderByDescending(x=>x.Id).FirstOrDefaultAsync();
+        return result == null ? -1 : result.Id;
+    }
+/*     public async Task<List<ProductPhoto>> GetProductPhotosAsync()
     {
         return await _context.ProductPhotos.ToListAsync();
-    }
+    } */
 
     public async Task InsertProductPhotoAsync(ProductPhoto productPhoto)
     {
@@ -50,7 +57,7 @@ public class ProductPhotoRepository : IProductPhotoRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task UpdateProductPhotoAsync(ProductPhoto productPhoto)
+/*     public async Task UpdateProductPhotoAsync(ProductPhoto productPhoto)
     {
         var productPhotoFromDb = await _context.ProductPhotos.FindAsync(new object[] { productPhoto.Id });
         if (productPhotoFromDb == null) throw new APIException("No such productPhoto", StatusCodes.Status404NotFound);
@@ -59,5 +66,5 @@ public class ProductPhotoRepository : IProductPhotoRepository
         {
             prop.SetValue(productPhotoFromDb, prop.GetValue(productPhoto)); //NB обобщил
         }
-    }
+    } */
 }
