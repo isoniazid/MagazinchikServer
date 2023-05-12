@@ -7,14 +7,7 @@ public class ProductRepository : IProductRepository
         _context = context;
     }
 
-    public async Task DeleteProductAsync(int productId)
-    {
-        var productFromDb = await _context.Products.FindAsync(new object[] { productId });
-        if (productFromDb == null) throw new APIException($"No such product with id {productId}", StatusCodes.Status404NotFound);
-        _context.Products.Remove(productFromDb);
-    }
-
-    protected virtual void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing)
     {
         if (!_disposed && disposing)
         {
@@ -29,6 +22,13 @@ public class ProductRepository : IProductRepository
         GC.SuppressFinalize(this);
     }
 
+    public async Task DeleteProductAsync(int productId)
+    {
+        var productFromDb = await _context.Products.FindAsync(new object[] { productId });
+        if (productFromDb == null) throw new APIException($"No such product with id {productId}", StatusCodes.Status404NotFound);
+        _context.Products.Remove(productFromDb);
+    }
+
     public async Task<ProductDto> GetProductDtoAsync(int productId)
     {
         var productFromDb = await _context.Products.FindAsync(new object[] { productId });
@@ -37,6 +37,7 @@ public class ProductRepository : IProductRepository
 
         var photosList = _context.ProductPhotos.ToList().Where(p => p.ProductId == productFromDb.Id);
         List<int> photoIds = new List<int>();
+        
         if (photosList != null)
         {
             foreach (var photo in productFromDb.Photos)

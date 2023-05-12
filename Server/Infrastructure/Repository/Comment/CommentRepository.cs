@@ -42,6 +42,7 @@ public class CommentRepository : ICommentRepository
 
     public async Task InsertCommentAsync(Comment comment)
     {
+        comment.CreatedNow();
         await _context.Comments.AddAsync(comment);
     }
 
@@ -59,5 +60,38 @@ public class CommentRepository : ICommentRepository
         {
             prop.SetValue(commentFromDb, prop.GetValue(comment)); //NB обобщил
         }
+
+        commentFromDb.Update();
+    }
+
+    public List<CommentDto> GetAllCommentDtoForProduct(int id)
+    {
+        var DtoList = new List<CommentDto>();
+        //NB
+        var commentList = _context.Comments.Include(p => p.User).Include(p => p.Product).ToList().Where(p => p.ProductId == id);
+
+
+        foreach(var comment in commentList)
+        {
+            DtoList.Add(new CommentDto(comment.Id,comment.User.Id,comment.User.Name,comment.Product.Name,comment.Product.Slug,comment.Text,comment.CreatedAt, comment.UpdatedAt));
+        }
+
+        return DtoList;
+
+    }
+
+    public List<CommentDto> GetAllCommentDtoForUser(int id)
+    {
+        var DtoList = new List<CommentDto>();
+        //NB
+        var commentList = _context.Comments.Include(p => p.User).Include(p => p.Product).ToList().Where(p => p.UserId == id);
+
+
+        foreach(var comment in commentList)
+        {
+            DtoList.Add(new CommentDto(comment.Id,comment.User.Id,comment.User.Name,comment.Product.Name,comment.Product.Slug,comment.Text,comment.CreatedAt, comment.UpdatedAt));
+        }
+
+        return DtoList;
     }
 }

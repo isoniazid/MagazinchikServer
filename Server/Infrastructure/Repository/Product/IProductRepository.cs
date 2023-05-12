@@ -4,9 +4,9 @@ public interface IProductRepository : IDisposable
     //Базовые круды
     Task<List<Product>> GetProductsAsync();
 
-    Task<ProductDto> GetProductDtoAsync(int productId);
-
     Task<Product> GetProductAsync(int productId);
+
+    Task<ProductDto> GetProductDtoAsync(int productId);
 
     Task<ProductDto> GetProductDtoAsync (string slug);
 

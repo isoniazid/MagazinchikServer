@@ -29,7 +29,6 @@ public class ProductAPI
         //Добавить product с параметрами
         app.MapPost("/api/product", async ([FromBody] Product product, IProductRepository repo) =>
         {
-
             await repo.InsertProductAsync(product);
             await repo.SaveAsync();
             return Results.Created($"/api/{product.Id}", product);
@@ -42,7 +41,6 @@ public class ProductAPI
         //Изменить product
         app.MapPut("/api/product", async ([FromBody] Product product, IProductRepository repo) =>
         {
-
             await repo.UpdateProductAsync(product);
             await repo.SaveAsync();
             return Results.Ok();
@@ -77,10 +75,6 @@ public class ProductAPI
             currentProduct.Photos.Add(photo);
             photo.Product = currentProduct;
 
-            
-
-
-
             string uploadPath = $"{Directory.GetCurrentDirectory()}/img/{photo.Id}.jpg";
 
 
@@ -99,7 +93,6 @@ public class ProductAPI
 
             return Results.Created($"/api/{photo.Id}", photo);
         })
-        //.Accepts<ProductPhoto>("application/json")
         .Produces<ProductPhoto>(StatusCodes.Status201Created)
         .WithName("Adds productPhoto by params")
         .WithTags("product");
