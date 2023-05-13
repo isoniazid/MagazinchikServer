@@ -88,10 +88,10 @@ public class CommentAPI
 
             var userFromDb = await userRepo.GetUserAsync(sendDto.userId);
             var productFromDb = await productRepo.GetProductAsync(sendDto.productId);
+            var commentFromDb = await repo.GetCommentAsync(id);
+            commentFromDb.Text = sendDto.text;
 
-            var commentToSave = new Comment() {Id = id, Text = sendDto.text, UserId = sendDto.userId, ProductId = sendDto.productId}; 
-
-            await repo.UpdateCommentAsync(commentToSave);
+            await repo.UpdateCommentAsync(commentFromDb);
             await repo.SaveAsync();
 
             return Results.Ok(new CommentDto(
@@ -100,9 +100,9 @@ public class CommentAPI
                 userFromDb.Name,
                 productFromDb.Name,
                 productFromDb.Slug,
-                commentToSave.Text,
-                commentToSave.CreatedAt,
-                commentToSave.UpdatedAt));
+                commentFromDb.Text,
+                commentFromDb.CreatedAt,
+                commentFromDb.UpdatedAt));
         })
         .Accepts<CommentToSendDto>("application/json")
         .WithName("Replaces comment with params")
