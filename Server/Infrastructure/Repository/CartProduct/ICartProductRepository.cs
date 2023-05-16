@@ -6,9 +6,11 @@ public interface ICartProductRepository : IDisposable
 
     Task InsertCartProductAsync(CartProduct cartProduct);
 
-    Task UpdateCartProductAsync(CartProduct cartProduct);
+    Task<CartProduct> UpdateCartProductAsync(CartProductDto dto);
 
     Task DeleteCartProductAsync(int cartProductId);
+
+    List<ProductDto> DeleteAllCartProductAsync (int cartId);
 
     Task SaveAsync();
 }

@@ -116,9 +116,10 @@ public static class Starter
         new AuthAPI().Register(app);
         new ProductPhotoAPI().Register(app);
         new CommentAPI().Register(app);
+        new CartProductAPI().Register(app);
       /*  new ActivationAPI().Register(app);
         new CartAPI().Register(app);
-        new CartProductAPI().Register(app);
+        
         
         new FavouriteAPI().Register(app);
         new OrderAPI().Register(app);

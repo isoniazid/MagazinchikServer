@@ -2,7 +2,7 @@ public interface IProductRepository : IDisposable
 {
 
     //Базовые круды
-    Task<List<Product>> GetProductsAsync();
+    Task<List<ProductDto>> GetProductsAsync();
 
     Task<Product> GetProductAsync(int productId);
 
@@ -15,6 +15,8 @@ public interface IProductRepository : IDisposable
     Task UpdateProductAsync(Product product);
 
     Task DeleteProductAsync(int productId);
+
+    List<Product>GetAllProductsByCartId(int cartId);
 
     Task SaveAsync();
 

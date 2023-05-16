@@ -4,7 +4,7 @@ public class ProductAPI
     {
         //Получить всех product
         app.MapGet("/api/product", async (IProductRepository repo) => Results.Ok(await repo.GetProductsAsync()))
-        .Produces<List<Product>>(StatusCodes.Status200OK)
+        .Produces<List<ProductDto>>(StatusCodes.Status200OK)
         .WithName("GetAllProduct")
         .WithTags("product");
 

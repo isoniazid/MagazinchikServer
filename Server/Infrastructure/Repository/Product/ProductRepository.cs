@@ -58,10 +58,26 @@ public class ProductRepository : IProductRepository
 
         return result;
     }
-    public async Task<List<Product>> GetProductsAsync()
+    public async Task<List<ProductDto>> GetProductsAsync()
     {
-        return await _context.Products.ToListAsync();
+        var result = new List<ProductDto>();
+        var raw_list = await _context.Products.Include(p => p.Photos).ToListAsync();
+
+        foreach(var element in raw_list)
+        {
+            result.Add( new ProductDto(element.Id,
+            element.Name,
+            element.Slug,
+            element.Price,
+            element.Description,
+            element.CommentsCount,
+            element.AverageRating,
+            element.Photos.Select(p => p.Id).ToArray()));
+        }
+
+        return result;
     }
+
 
     public async Task InsertProductAsync(Product product)
     {
@@ -123,6 +139,17 @@ public class ProductRepository : IProductRepository
 
         return productFromDb;
 
+    }
+
+    public  List<Product> GetAllProductsByCartId(int cartId)
+    {
+        var productList = new List<Product>();
+        var cartProducts =  _context.CartProducts.Include(p => p.Product).ToList().Where(u => u.CartId == cartId);
+        foreach (var cpr in cartProducts)
+        {
+            productList.Add(cpr.Product ?? throw new APIException("trying to add null product",400));
+        }
+        return productList;
     }
 }
 

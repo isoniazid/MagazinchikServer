@@ -42,7 +42,13 @@ public class CartProductRepository : ICartProductRepository
 
     public async Task InsertCartProductAsync(CartProduct cartProduct)
     {
-        await _context.CartProducts.AddAsync(cartProduct);
+        var exists = await _context.CartProducts.FirstOrDefaultAsync(p => p.ProductId == cartProduct.ProductId && p.CartId == cartProduct.CartId);
+        if (exists == null)
+        {
+            cartProduct.CreatedNow();
+            await _context.CartProducts.AddAsync(cartProduct);
+        }
+        else throw new APIException("position for such product already exists in cart. Use PATCH instead", 400);
     }
 
     public async Task SaveAsync()
@@ -50,14 +56,43 @@ public class CartProductRepository : ICartProductRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task UpdateCartProductAsync(CartProduct cartProduct)
+    public async Task<CartProduct> UpdateCartProductAsync(CartProductDto dto)
     {
-        var cartProductFromDb = await _context.CartProducts.FindAsync(new object[] { cartProduct.Id });
+        var cartProductFromDb = await _context.CartProducts.FirstOrDefaultAsync(p => p.CartId == dto.cartId && p.ProductId == dto.productId);
         if (cartProductFromDb == null) throw new APIException("No such cartProduct", StatusCodes.Status404NotFound);
-        
-        foreach(var prop in typeof(CartProduct).GetProperties(BindingFlags.Public))
+
+        cartProductFromDb.Update();
+        cartProductFromDb.ProductCount = dto.productCount;
+        return cartProductFromDb;
+    }
+
+    public List<ProductDto> DeleteAllCartProductAsync(int cartId)
+    {
+        var cartProductsToDelete = _context.CartProducts.Include(p => p.Product).ToList().Where(p => p.CartId == cartId)
+        ?? throw new APIException("No such cart", 400);
+
+        var rawProductList = cartProductsToDelete.Select(p => p.Product)
+        ?? throw new APIException("The cart is empty", 400);
+        var result = new List<ProductDto>();
+
+        foreach (Product? element in rawProductList)
         {
-            prop.SetValue(cartProductFromDb, prop.GetValue(cartProduct)); //NB обобщил
+            if (element != null)
+            {
+                result.Add(new ProductDto(element.Id,
+                element.Name,
+                element.Slug,
+                element.Price,
+                element.Description,
+                element.CommentsCount,
+                element.AverageRating,
+                element.Photos.Select(p => p.Id).ToArray()));
+            }
         }
+
+
+        _context.CartProducts.RemoveRange(cartProductsToDelete);
+        return result;
+
     }
 }

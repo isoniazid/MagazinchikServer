@@ -11,4 +11,9 @@ public class User : Traceable
 
     [JsonIgnore]
     public string Role { get; set; } = string.Empty; 
+
+    public int CartId {get; set;}
+
+    [JsonIgnore]
+    public Cart Cart {get; set;} = new();
 }
