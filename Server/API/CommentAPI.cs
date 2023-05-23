@@ -40,7 +40,7 @@ public class CommentAPI
 
         //Добавить comment
         app.MapPost("/api/comment", [Authorize] async ([FromBody] CommentToSendDto sendDto,
-         ICommentRepository repo, IProductRepository prodRepo, IUserRepository userRepo, HttpContext context) =>
+         ICommentRepository repo, IProductRepository prodRepo, IUserRepository userRepo, IRateRepository rateRepo, HttpContext context) =>
         {
 
             int jwtId = Convert.ToInt32(context.User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new APIException("Broken acces token", 401));
@@ -69,7 +69,8 @@ public class CommentAPI
                 UserId = commentUser.Id
             };
 
-
+            await rateRepo.InsertRateAsync(rate);
+            await rateRepo.SaveAsync();
             await repo.InsertCommentAsync(comment);
             await repo.SaveAsync();
             return Results.Created($"/api/{comment.Id}",
