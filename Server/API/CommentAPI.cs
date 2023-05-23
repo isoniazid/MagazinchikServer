@@ -50,6 +50,15 @@ public class CommentAPI
             Product commentProduct = await prodRepo.GetProductAsync(sendDto.productId);
             User commentUser = await userRepo.GetUserAsync(sendDto.userId);
 
+            var rate = new Rate()
+            {
+                ProductId = commentProduct.Id,
+                User = commentUser,
+                Value = sendDto.rating,
+                Product = commentProduct,  
+            };
+
+            rate.CreatedNow();
 
             var comment = new Comment()
             {
@@ -72,7 +81,8 @@ public class CommentAPI
                 commentProduct.Slug,
                 comment.Text,
                 comment.CreatedAt,
-                comment.UpdatedAt));
+                comment.UpdatedAt,
+                sendDto.rating));
         })
         .Accepts<CommentToSendDto>("application/json")
         .Produces<CommentDto>(StatusCodes.Status201Created)
@@ -102,7 +112,8 @@ public class CommentAPI
                 productFromDb.Slug,
                 commentFromDb.Text,
                 commentFromDb.CreatedAt,
-                commentFromDb.UpdatedAt));
+                commentFromDb.UpdatedAt,
+                -100));
         })
         .Accepts<CommentToSendDto>("application/json")
         .WithName("Replaces comment with params")
@@ -130,7 +141,8 @@ public class CommentAPI
                 CommentToDelete.Product.Slug,
                 CommentToDelete.Text,
                 CommentToDelete.CreatedAt,
-                CommentToDelete.UpdatedAt
+                CommentToDelete.UpdatedAt,
+                -100
             ));
         })
         .WithName("DeleteComment")

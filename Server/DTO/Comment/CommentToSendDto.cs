@@ -1,1 +1,1 @@
-public record CommentToSendDto(int userId, int productId, string text);
+public record CommentToSendDto(int userId, int productId, string text, int rating);

@@ -73,7 +73,7 @@ public class CommentRepository : ICommentRepository
 
         foreach(var comment in commentList)
         {
-            DtoList.Add(new CommentDto(comment.Id,comment.User.Id,comment.User.Name,comment.Product.Name,comment.Product.Slug,comment.Text,comment.CreatedAt, comment.UpdatedAt));
+            DtoList.Add(new CommentDto(comment.Id,comment.User.Id,comment.User.Name,comment.Product.Name,comment.Product.Slug,comment.Text,comment.CreatedAt, comment.UpdatedAt, -100));
         }
 
         return DtoList;
@@ -89,7 +89,7 @@ public class CommentRepository : ICommentRepository
 
         foreach(var comment in commentList)
         {
-            DtoList.Add(new CommentDto(comment.Id,comment.User.Id,comment.User.Name,comment.Product.Name,comment.Product.Slug,comment.Text,comment.CreatedAt, comment.UpdatedAt));
+            DtoList.Add(new CommentDto(comment.Id,comment.User.Id,comment.User.Name,comment.Product.Name,comment.Product.Slug,comment.Text,comment.CreatedAt, comment.UpdatedAt, -100));
         }
 
         return DtoList;
